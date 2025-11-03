@@ -10,12 +10,8 @@
     "description": {
       "$ref": "#/$defs/Description"
     },
-    "environments": {
-      "type": "array",
-      "description": "Array of environments",
-      "items": {
-        "$ref": "#/$defs/Environment"
-      }
+    "config": {
+      "$ref": "#/$defs/CollectionConfig"
     },
     "items": {
       "type": "array",
@@ -24,9 +20,24 @@
         "$ref": "#/$defs/Item"
       }
     },
-    "base": {
+    "request": {
+      "$ref": "#/$defs/RequestDefaults"
+    },
+    "docs": {
+      "$ref": "#/$defs/Documentation"
+    },
+    "extensions": {
+      "$ref": "#/$defs/Extensions"
+    }
+  },
+  "$defs": {
+    "Extensions": {
       "type": "object",
-      "description": "Base configuration for the collection",
+      "description": "Free-form object that allows implementers to extend the spec"
+    },
+    "RequestDefaults": {
+      "type": "object",
+      "description": "Default request configuration for the collection/folder",
       "properties": {
         "headers": {
           "type": "array",
@@ -51,12 +62,83 @@
       },
       "additionalProperties": false
     },
-    "docs": {
-      "type": "string",
-      "description": "The documentation"
-    }
-  },
-  "$defs": {
+    "CollectionConfig": {
+      "type": "object",
+      "description": "Configuration for the collection",
+      "properties": {
+        "environments": {
+          "type": "array",
+          "description": "Array of environments",
+          "items": {
+            "$ref": "#/$defs/Environment"
+          }
+        },
+        "protobuf": {
+          "$ref": "#/$defs/Protobuf"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Protobuf": {
+      "type": "object",
+      "description": "Protobuf configuration",
+      "properties": {
+        "protofFiles": {
+          "type": "array",
+          "description": "Array of proto files",
+          "items": {
+            "$ref": "#/$defs/ProtoFileItem"
+          }
+        },
+        "importPaths": {
+          "type": "array",
+          "description": "Array of proto file import paths",
+          "items": {
+            "$ref": "#/$defs/ProtoFileImportPath"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "ProtoFileItem": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ProtoFile"
+        }
+      ]
+    },
+    "ProtoFile": {
+      "type": "object",
+      "description": "A proto file reference",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "file"
+        },
+        "path": {
+          "type": "string",
+          "description": "Path to the proto file"
+        }
+      },
+      "required": ["type", "path"],
+      "additionalProperties": false
+    },
+    "ProtoFileImportPath": {
+      "type": "object",
+      "description": "A proto file import path",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "The import path"
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether the import path is enabled"
+        }
+      },
+      "required": ["path", "enabled"],
+      "additionalProperties": false
+    },
     "Description": {
       "description": "The description",
       "oneOf": [
@@ -66,6 +148,32 @@
             "content": {
               "type": "string",
               "description": "The content of the description"
+            },
+            "type": {
+              "type": "string",
+              "description": "The MIME type of the content"
+            }
+          },
+          "required": ["content", "type"],
+          "additionalProperties": false
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "Documentation": {
+      "description": "The documentation",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "content": {
+              "type": "string",
+              "description": "The content of the documentation"
             },
             "type": {
               "type": "string",
@@ -493,10 +601,75 @@
         }
       ]
     },
+    "Tag": {
+      "type": "string",
+      "description": "A tag for categorizing or labeling items"
+    },
+    "HttpRequestSettings": {
+      "type": "object",
+      "description": "Settings for HTTP request execution",
+      "properties": {
+        "encodeUrl": {
+          "oneOf": [
+            {
+              "type": "boolean",
+              "const": true
+            },
+            {
+              "type": "boolean",
+              "const": false
+            },
+            {
+              "type": "string",
+              "const": "inherit"
+            }
+          ],
+          "description": "Whether to encode the URL"
+        },
+        "timeout": {
+          "type": "number",
+          "description": "Request timeout in milliseconds"
+        },
+        "followRedirects": {
+          "oneOf": [
+            {
+              "type": "boolean",
+              "const": true
+            },
+            {
+              "type": "boolean",
+              "const": false
+            },
+            {
+              "type": "string",
+              "const": "inherit"
+            }
+          ],
+          "description": "Whether to follow redirects"
+        },
+        "maxRedirects": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string",
+              "const": "inherit"
+            }
+          ],
+          "description": "Maximum number of redirects to follow"
+        }
+      },
+      "additionalProperties": false
+    },
     "HttpRequest": {
       "type": "object",
       "description": "HTTP request configuration",
       "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the request"
+        },
         "type": {
           "type": "string",
           "const": "http",
@@ -550,6 +723,16 @@
         "docs": {
           "type": "string",
           "description": "Documentation for this request"
+        },
+        "settings": {
+          "$ref": "#/$defs/HttpRequestSettings"
+        },
+        "tags": {
+          "type": "array",
+          "description": "Array of tags",
+          "items": {
+            "$ref": "#/$defs/Tag"
+          }
         }
       },
       "required": ["type"],
@@ -567,29 +750,18 @@
           "type": "string",
           "const": "folder"
         },
-        "headers": {
+        "items": {
           "type": "array",
-          "description": "Array of request headers",
+          "description": "Array of items in the folder",
           "items": {
-            "$ref": "#/$defs/RequestHeader"
+            "$ref": "#/$defs/Item"
           }
         },
-        "auth": {
-          "$ref": "#/$defs/Auth"
-        },
-        "variables": {
-          "type": "array",
-          "description": "Array of variables",
-          "items": {
-            "$ref": "#/$defs/Variable"
-          }
-        },
-        "scripts": {
-          "$ref": "#/$defs/Scripts"
+        "request": {
+          "$ref": "#/$defs/RequestDefaults"
         },
         "docs": {
-          "type": "string",
-          "description": "Documentation for this folder"
+          "$ref": "#/$defs/Documentation"
         }
       },
       "additionalProperties": false
