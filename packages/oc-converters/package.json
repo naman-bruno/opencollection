@@ -1,0 +1,12 @@
+{
+  "name": "@opencollection/converters",
+  "version": "0.0.2",
+  "description": "Converters for Opencollection",
+  "author": "Bruno Software Inc.",
+  "main": "src/index.js",
+  "files": [
+    "src",
+    "package.json"
+  ],
+  "license": "MIT"
+}

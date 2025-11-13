@@ -75,6 +75,29 @@
         },
         "protobuf": {
           "$ref": "#/$defs/Protobuf"
+        },
+        "proxy": {
+          "oneOf": [
+            {
+              "type": "boolean",
+              "const": false
+            },
+            {
+              "$ref": "#/$defs/Proxy"
+            },
+            {
+              "type": "string",
+              "const": "inherit"
+            }
+          ],
+          "description": "Proxy configuration for the collection"
+        },
+        "clientCertificates": {
+          "type": "array",
+          "description": "Array of client certificates for mutual TLS authentication",
+          "items": {
+            "$ref": "#/$defs/ClientCertificate"
+          }
         }
       },
       "additionalProperties": false
@@ -98,6 +121,120 @@
           }
         }
       },
+      "additionalProperties": false
+    },
+    "Proxy": {
+      "type": "object",
+      "description": "Proxy configuration",
+      "properties": {
+        "protocol": {
+          "type": "string",
+          "description": "Proxy protocol"
+        },
+        "hostname": {
+          "type": "string",
+          "description": "Proxy hostname"
+        },
+        "port": {
+          "type": "number",
+          "description": "Proxy port"
+        },
+        "auth": {
+          "oneOf": [
+            {
+              "type": "boolean",
+              "const": false
+            },
+            {
+              "$ref": "#/$defs/ProxyAuth"
+            }
+          ],
+          "description": "Proxy authentication"
+        },
+        "bypassProxy": {
+          "type": "string",
+          "description": "Bypass proxy string"
+        }
+      },
+      "required": ["protocol", "hostname", "port"],
+      "additionalProperties": false
+    },
+    "ProxyAuth": {
+      "type": "object",
+      "description": "Proxy authentication credentials",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "Proxy username"
+        },
+        "password": {
+          "type": "string",
+          "description": "Proxy password"
+        }
+      },
+      "required": ["username", "password"],
+      "additionalProperties": false
+    },
+    "ClientCertificate": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/PemCertificate"
+        },
+        {
+          "$ref": "#/$defs/Pkcs12Certificate"
+        }
+      ]
+    },
+    "PemCertificate": {
+      "type": "object",
+      "description": "Client certificate using separate PEM-encoded cert and key files",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "The domain this certificate applies to"
+        },
+        "type": {
+          "type": "string",
+          "const": "pem"
+        },
+        "certificateFilePath": {
+          "type": "string",
+          "description": "Path to the certificate file"
+        },
+        "privateKeyFilePath": {
+          "type": "string",
+          "description": "Path to the private key file"
+        },
+        "passphrase": {
+          "type": "string",
+          "description": "Passphrase for the private key (optional)"
+        }
+      },
+      "required": ["domain", "type", "certificateFilePath", "privateKeyFilePath"],
+      "additionalProperties": false
+    },
+    "Pkcs12Certificate": {
+      "type": "object",
+      "description": "Client certificate using PKCS#12 format (PFX)",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "The domain this certificate applies to"
+        },
+        "type": {
+          "type": "string",
+          "const": "pkcs12"
+        },
+        "pkcs12FilePath": {
+          "type": "string",
+          "description": "Path to the PKCS#12/PFX file"
+        },
+        "passphrase": {
+          "type": "string",
+          "description": "Passphrase for the PKCS#12 file (optional)"
+        }
+      },
+      "required": ["domain", "type", "pkcs12FilePath"],
       "additionalProperties": false
     },
     "ProtoFileItem": {
