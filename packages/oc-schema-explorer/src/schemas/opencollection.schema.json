@@ -41,9 +41,16 @@
       "properties": {
         "headers": {
           "type": "array",
-          "description": "Array of request headers",
+          "description": "Array of http headers, sent with http, graphql, websocket requests",
           "items": {
-            "$ref": "#/$defs/RequestHeader"
+            "$ref": "#/$defs/HttpHeader"
+          }
+        },
+        "metadata": {
+          "type": "array",
+          "description": "Array of gRPC metadata, sent with grpc requests",
+          "items": {
+            "$ref": "#/$defs/GrpcMetadata"
           }
         },
         "auth": {
@@ -58,6 +65,9 @@
         },
         "scripts": {
           "$ref": "#/$defs/Scripts"
+        },
+        "settings": {
+          "$ref": "#/$defs/RequestSettings"
         }
       },
       "additionalProperties": false
@@ -328,9 +338,9 @@
         }
       ]
     },
-    "RequestHeader": {
+    "HttpHeader": {
       "type": "object",
-      "description": "A request header with name, value, description, and disabled state",
+      "description": "Http header with name, value, description, and disabled state",
       "properties": {
         "name": {
           "type": "string",
@@ -351,7 +361,60 @@
       "required": ["name", "value"],
       "additionalProperties": false
     },
-    "RequestParam": {
+    "GrpcMetadata": {
+      "type": "object",
+      "description": "A gRPC metadata entry with name, value, description, and disabled state",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The metadata name"
+        },
+        "value": {
+          "type": "string",
+          "description": "The metadata value"
+        },
+        "description": {
+          "$ref": "#/$defs/Description"
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Whether the metadata is disabled"
+        }
+      },
+      "required": ["name", "value"],
+      "additionalProperties": false
+    },
+    "GrpcRequestMessage": {
+      "type": "object",
+      "description": "A gRPC request message with description and data",
+      "properties": {
+        "description": {
+          "$ref": "#/$defs/Description"
+        },
+        "message": {
+          "type": "string",
+          "description": "The message"
+        }
+      },
+      "required": ["message"],
+      "additionalProperties": false
+    },
+    "WebSocketRequestMessage": {
+      "type": "object",
+      "description": "A WebSocket request message with description and data",
+      "properties": {
+        "description": {
+          "$ref": "#/$defs/Description"
+        },
+        "message": {
+          "type": "string",
+          "description": "The message"
+        }
+      },
+      "required": ["message"],
+      "additionalProperties": false
+    },
+    "HttpRequestParam": {
       "type": "object",
       "description": "A request parameter with name, value, description, type, and enabled state",
       "properties": {
@@ -379,7 +442,7 @@
       "required": ["name", "value", "type"],
       "additionalProperties": false
     },
-    "RequestBody": {
+    "HttpRequestBody": {
       "oneOf": [
         {
           "$ref": "#/$defs/RawBody"
@@ -504,6 +567,21 @@
         "required": ["filePath", "contentType", "selected"],
         "additionalProperties": false
       }
+    },
+    "GraphQLBody": {
+      "type": "object",
+      "description": "GraphQL request body with query and variables",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "The GraphQL query or mutation"
+        },
+        "variables": {
+          "type": "string",
+          "description": "JSON string containing GraphQL variables"
+        }
+      },
+      "additionalProperties": false
     },
     "Assertion": {
       "type": "object",
@@ -731,6 +809,9 @@
           "$ref": "#/$defs/GrpcRequest"
         },
         {
+          "$ref": "#/$defs/WebSocketRequest"
+        },
+        {
           "$ref": "#/$defs/Folder"
         },
         {
@@ -799,6 +880,76 @@
       },
       "additionalProperties": false
     },
+    "GraphQLRequestSettings": {
+      "type": "object",
+      "description": "Settings for GraphQL request execution",
+      "properties": {
+        "encodeUrl": {
+          "oneOf": [
+            {
+              "type": "boolean",
+              "const": true
+            },
+            {
+              "type": "boolean",
+              "const": false
+            },
+            {
+              "type": "string",
+              "const": "inherit"
+            }
+          ],
+          "description": "Whether to encode the URL"
+        },
+        "timeout": {
+          "type": "number",
+          "description": "Request timeout in milliseconds"
+        },
+        "followRedirects": {
+          "oneOf": [
+            {
+              "type": "boolean",
+              "const": true
+            },
+            {
+              "type": "boolean",
+              "const": false
+            },
+            {
+              "type": "string",
+              "const": "inherit"
+            }
+          ],
+          "description": "Whether to follow redirects"
+        },
+        "maxRedirects": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string",
+              "const": "inherit"
+            }
+          ],
+          "description": "Maximum number of redirects to follow"
+        }
+      },
+      "additionalProperties": false
+    },
+    "RequestSettings": {
+      "type": "object",
+      "description": "Request settings for different request types",
+      "properties": {
+        "http": {
+          "$ref": "#/$defs/HttpRequestSettings"
+        },
+        "graphql": {
+          "$ref": "#/$defs/GraphQLRequestSettings"
+        }
+      },
+      "additionalProperties": false
+    },
     "HttpRequest": {
       "type": "object",
       "description": "HTTP request configuration",
@@ -806,6 +957,9 @@
         "name": {
           "type": "string",
           "description": "The name of the request"
+        },
+        "description": {
+          "$ref": "#/$defs/Description"
         },
         "type": {
           "type": "string",
@@ -824,18 +978,18 @@
           "type": "array",
           "description": "Array of request parameters",
           "items": {
-            "$ref": "#/$defs/RequestParam"
+            "$ref": "#/$defs/HttpRequestParam"
           }
         },
         "headers": {
           "type": "array",
           "description": "Array of request headers",
           "items": {
-            "$ref": "#/$defs/RequestHeader"
+            "$ref": "#/$defs/HttpHeader"
           }
         },
         "body": {
-          "$ref": "#/$defs/RequestBody"
+          "$ref": "#/$defs/HttpRequestBody"
         },
         "auth": {
           "$ref": "#/$defs/Auth"
@@ -876,8 +1030,235 @@
       "additionalProperties": false
     },
     "GraphQLRequest": {
+      "type": "object",
+      "description": "GraphQL request configuration",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the request"
+        },
+        "description": {
+          "$ref": "#/$defs/Description"
+        },
+        "type": {
+          "type": "string",
+          "const": "graphql",
+          "description": "The type of request"
+        },
+        "url": {
+          "type": "string",
+          "description": "The URL of the request"
+        },
+        "method": {
+          "type": "string",
+          "description": "HTTP method"
+        },
+        "params": {
+          "type": "array",
+          "description": "Array of request parameters",
+          "items": {
+            "$ref": "#/$defs/HttpRequestParam"
+          }
+        },
+        "headers": {
+          "type": "array",
+          "description": "Array of request headers",
+          "items": {
+            "$ref": "#/$defs/HttpHeader"
+          }
+        },
+        "body": {
+          "$ref": "#/$defs/GraphQLBody"
+        },
+        "auth": {
+          "$ref": "#/$defs/Auth"
+        },
+        "scripts": {
+          "$ref": "#/$defs/Scripts"
+        },
+        "variables": {
+          "type": "array",
+          "description": "Array of variables",
+          "items": {
+            "$ref": "#/$defs/Variable"
+          }
+        },
+        "assertions": {
+          "type": "array",
+          "description": "Array of assertions for response validation",
+          "items": {
+            "$ref": "#/$defs/Assertion"
+          }
+        },
+        "docs": {
+          "type": "string",
+          "description": "Documentation for this request"
+        },
+        "settings": {
+          "$ref": "#/$defs/GraphQLRequestSettings"
+        },
+        "tags": {
+          "type": "array",
+          "description": "Array of tags",
+          "items": {
+            "$ref": "#/$defs/Tag"
+          }
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
     },
     "GrpcRequest": {
+      "type": "object",
+      "description": "gRPC request configuration",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the request"
+        },
+        "description": {
+          "$ref": "#/$defs/Description"
+        },
+        "type": {
+          "type": "string",
+          "const": "grpc",
+          "description": "The type of request"
+        },
+        "url": {
+          "type": "string",
+          "description": "The gRPC service URL or endpoint"
+        },
+        "method": {
+          "type": "string",
+          "description": "Full RPC method name (package.Service/Method)"
+        },
+        "methodType": {
+          "type": "string",
+          "enum": ["unary", "client-streaming", "server-streaming", "bidi-streaming"],
+          "description": "Method streaming type"
+        },
+        "protoFilePath": {
+          "type": "string",
+          "description": "Path to the proto file"
+        },
+        "metadata": {
+          "type": "array",
+          "description": "Array of gRPC metadata",
+          "items": {
+            "$ref": "#/$defs/GrpcMetadata"
+          }
+        },
+        "message": {
+          "description": "gRPC request message",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/GrpcRequestMessage"
+              }
+            }
+          ]
+        },
+        "auth": {
+          "$ref": "#/$defs/Auth"
+        },
+        "scripts": {
+          "$ref": "#/$defs/Scripts"
+        },
+        "variables": {
+          "type": "array",
+          "description": "Array of variables",
+          "items": {
+            "$ref": "#/$defs/Variable"
+          }
+        },
+        "assertions": {
+          "type": "array",
+          "description": "Array of assertions for response validation",
+          "items": {
+            "$ref": "#/$defs/Assertion"
+          }
+        },
+        "docs": {
+          "type": "string",
+          "description": "Documentation for this request"
+        },
+        "tags": {
+          "type": "array",
+          "description": "Array of tags",
+          "items": {
+            "$ref": "#/$defs/Tag"
+          }
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    },
+    "WebSocketRequest": {
+      "type": "object",
+      "description": "WebSocket request configuration",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the request"
+        },
+        "description": {
+          "$ref": "#/$defs/Description"
+        },
+        "url": {
+          "type": "string",
+          "description": "The WebSocket URL"
+        },
+        "headers": {
+          "type": "array",
+          "description": "Array of request headers",
+          "items": {
+            "$ref": "#/$defs/HttpHeader"
+          }
+        },
+        "message": {
+          "description": "WebSocket message",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/WebSocketRequestMessage"
+              }
+            }
+          ]
+        },
+        "auth": {
+          "$ref": "#/$defs/Auth"
+        },
+        "scripts": {
+          "$ref": "#/$defs/Scripts"
+        },
+        "variables": {
+          "type": "array",
+          "description": "Array of variables",
+          "items": {
+            "$ref": "#/$defs/Variable"
+          }
+        },
+        "docs": {
+          "type": "string",
+          "description": "Documentation for this request"
+        },
+        "tags": {
+          "type": "array",
+          "description": "Array of tags",
+          "items": {
+            "$ref": "#/$defs/Tag"
+          }
+        }
+      },
+      "additionalProperties": false
     },
     "Folder": {
       "type": "object",
@@ -899,6 +1280,13 @@
         },
         "docs": {
           "$ref": "#/$defs/Documentation"
+        },
+        "tags": {
+          "type": "array",
+          "description": "Array of tags",
+          "items": {
+            "$ref": "#/$defs/Tag"
+          }
         }
       },
       "additionalProperties": false
@@ -926,6 +1314,10 @@
           "type": "string",
           "description": "The name of the environment"
         },
+        "color": {
+          "type": "string",
+          "description": "The color of the environment"
+        },
         "description": {
           "$ref": "#/$defs/Description"
         },
@@ -934,6 +1326,13 @@
           "description": "Array of environment variables",
           "items": {
             "$ref": "#/$defs/Variable"
+          }
+        },
+        "clientCertificates": {
+          "type": "array",
+          "description": "Array of client certificates for mutual TLS authentication",
+          "items": {
+            "$ref": "#/$defs/ClientCertificate"
           }
         }
       },
