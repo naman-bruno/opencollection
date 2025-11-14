@@ -1448,16 +1448,15 @@
           "description": "The variable name"
         },
         "value": {
-          "description": "The variable value",
           "oneOf": [
             {
-              "type": "string"
+              "$ref": "#/$defs/VariableValue"
             },
             {
-              "$ref": "#/$defs/ValueSet"
-            },
-            {
-              "type": "null"
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/VariableValueVariant"
+              }
             }
           ]
         },
@@ -1474,74 +1473,52 @@
         },
         "default": {
           "description": "The default value when transient is true",
-          "oneOf": [
-            {
-              "type": "string"
+          "$ref": "#/$defs/VariableValue"
+        }
+      },
+      "additionalProperties": false
+    },
+    "VariableValue": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["string", "number", "boolean", "null", "object"],
+              "description": "The type of the value"
             },
-            {
-              "$ref": "#/$defs/Value"
-            },
-            {
-              "type": "null"
+            "data": {
+              "type": "string",
+              "description": "The string representation of the value"
             }
-          ]
+          },
+          "required": ["type", "data"],
+          "additionalProperties": false
         }
-      },
-      "additionalProperties": false
+      ],
+      "description": "A variable value (string or typed object)"
     },
-    "Value": {
+    "VariableValueVariant": {
       "type": "object",
-      "description": "A value with data and type information",
+      "description": "A variant of variable value with title, selected state, and value",
       "properties": {
-        "data": {
+        "title": {
           "type": "string",
-          "description": "The string representation of the value"
+          "description": "Title of the variant"
         },
-        "type": {
-          "type": "string",
-          "description": "The type of the value",
-          "enum": ["string", "number", "boolean", "null", "object"]
+        "selected": {
+          "type": "boolean",
+          "description": "Whether this variant is selected"
+        },
+        "value": {
+          "$ref": "#/$defs/VariableValue"
         }
       },
-      "additionalProperties": false
-    },
-    "ValueSet": {
-      "type": "object",
-      "description": "A value with data, type and variants",
-      "properties": {
-        "data": {
-          "type": "string",
-          "description": "The string representation of the value"
-        },
-        "type": {
-          "type": "string",
-          "description": "The type of the value",
-          "enum": ["string", "number", "boolean", "null", "object"]
-        },
-        "variants": {
-          "type": "array",
-          "description": "Array of variants for this value",
-          "items": {
-            "$ref": "#/$defs/Variant"
-          }
-        }
-      },
-      "additionalProperties": false
-    },
-    "Variant": {
-      "type": "object",
-      "description": "A variant with data and description",
-      "properties": {
-        "data": {
-          "type": "string",
-          "description": "The data for this variant"
-        },
-        "description": {
-          "type": "string",
-          "description": "The description for this variant"
-        }
-      },
-      "required": ["data"],
+      "required": ["title", "value"],
       "additionalProperties": false
     },
     "Scripts": {
