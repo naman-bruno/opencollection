@@ -399,19 +399,63 @@
       "required": ["message"],
       "additionalProperties": false
     },
-    "WebSocketRequestMessage": {
+    "GrpcMessage": {
+      "type": "string",
+      "description": "A gRPC message"
+    },
+    "GrpcMessageVariant": {
       "type": "object",
-      "description": "A WebSocket request message with description and data",
+      "description": "A variant of gRPC message with title, selected state, and message",
       "properties": {
-        "description": {
-          "$ref": "#/$defs/Description"
+        "title": {
+          "type": "string",
+          "description": "Title of the variant"
+        },
+        "selected": {
+          "type": "boolean",
+          "description": "Whether this variant is selected"
         },
         "message": {
-          "type": "string",
-          "description": "The message"
+          "$ref": "#/$defs/GrpcMessage"
         }
       },
-      "required": ["message"],
+      "required": ["title", "message"],
+      "additionalProperties": false
+    },
+    "WebSocketMessage": {
+      "type": "object",
+      "description": "A WebSocket message with type and data",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["text", "json", "xml", "binary"],
+          "description": "The type of WebSocket message"
+        },
+        "data": {
+          "type": "string",
+          "description": "The message data"
+        }
+      },
+      "required": ["type", "data"],
+      "additionalProperties": false
+    },
+    "WebSocketMessageVariant": {
+      "type": "object",
+      "description": "A variant of WebSocket message with title, selected state, and message",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Title of the variant"
+        },
+        "selected": {
+          "type": "boolean",
+          "description": "Whether this variant is selected"
+        },
+        "message": {
+          "$ref": "#/$defs/WebSocketMessage"
+        }
+      },
+      "required": ["title", "message"],
       "additionalProperties": false
     },
     "HttpRequestParam": {
@@ -460,6 +504,25 @@
           "type": "null"
         }
       ]
+    },
+    "HttpRequestBodyVariant": {
+      "type": "object",
+      "description": "A variant of HTTP request body with title, selected state, and body",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Title of the variant"
+        },
+        "selected": {
+          "type": "boolean",
+          "description": "Whether this variant is selected"
+        },
+        "body": {
+          "$ref": "#/$defs/HttpRequestBody"
+        }
+      },
+      "required": ["title", "body"],
+      "additionalProperties": false
     },
     "RawBody": {
       "type": "object",
@@ -581,6 +644,25 @@
           "description": "JSON string containing GraphQL variables"
         }
       },
+      "additionalProperties": false
+    },
+    "GraphQLBodyVariant": {
+      "type": "object",
+      "description": "A variant of GraphQL body with title, selected state, and body",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Title of the variant"
+        },
+        "selected": {
+          "type": "boolean",
+          "description": "Whether this variant is selected"
+        },
+        "body": {
+          "$ref": "#/$defs/GraphQLBody"
+        }
+      },
+      "required": ["title", "body"],
       "additionalProperties": false
     },
     "Assertion": {
@@ -989,7 +1071,17 @@
           }
         },
         "body": {
-          "$ref": "#/$defs/HttpRequestBody"
+          "oneOf": [
+            {
+              "$ref": "#/$defs/HttpRequestBody"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/HttpRequestBodyVariant"
+              }
+            }
+          ]
         },
         "auth": {
           "$ref": "#/$defs/Auth"
@@ -1068,7 +1160,17 @@
           }
         },
         "body": {
-          "$ref": "#/$defs/GraphQLBody"
+          "oneOf": [
+            {
+              "$ref": "#/$defs/GraphQLBody"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/GraphQLBodyVariant"
+              }
+            }
+          ]
         },
         "auth": {
           "$ref": "#/$defs/Auth"
@@ -1149,15 +1251,14 @@
           }
         },
         "message": {
-          "description": "gRPC request message",
           "oneOf": [
             {
-              "type": "string"
+              "$ref": "#/$defs/GrpcMessage"
             },
             {
               "type": "array",
               "items": {
-                "$ref": "#/$defs/GrpcRequestMessage"
+                "$ref": "#/$defs/GrpcMessageVariant"
               }
             }
           ]
@@ -1220,15 +1321,14 @@
           }
         },
         "message": {
-          "description": "WebSocket message",
           "oneOf": [
             {
-              "type": "string"
+              "$ref": "#/$defs/WebSocketMessage"
             },
             {
               "type": "array",
               "items": {
-                "$ref": "#/$defs/WebSocketRequestMessage"
+                "$ref": "#/$defs/WebSocketMessageVariant"
               }
             }
           ]
