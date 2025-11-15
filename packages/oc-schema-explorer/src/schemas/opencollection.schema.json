@@ -26,6 +26,10 @@
     "docs": {
       "$ref": "#/$defs/Documentation"
     },
+    "bundled": {
+      "type": "boolean",
+      "description": "True if the opencollection is a standalone file, false if stored on the filesystem with nested structure of folders and files"
+    },
     "extensions": {
       "$ref": "#/$defs/Extensions"
     }
@@ -1434,6 +1438,14 @@
           "items": {
             "$ref": "#/$defs/ClientCertificate"
           }
+        },
+        "extends": {
+          "type": "string",
+          "description": "The name of the environment to extend from"
+        },
+        "dotEnvFilePath": {
+          "type": "string",
+          "description": "Path to a .env file to load variables from"
         }
       },
       "required": ["name"],
