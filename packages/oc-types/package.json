@@ -3,42 +3,42 @@
   "version": "0.0.1",
   "description": "TypeScript types for OpenCollection schema",
   "author": "Bruno Software Inc.",
-  "main": "src/opencollection.ts",
-  "types": "src/opencollection.ts",
+  "main": "dist/opencollection.js",
+  "types": "dist/opencollection.d.ts",
   "files": [
+    "dist",
     "src",
-    "package.json",
-    "README.md"
+    "package.json"
   ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build"
+  },
   "exports": {
     ".": {
-      "types": "./src/opencollection.ts",
-      "default": "./src/opencollection.ts"
-    },
-    "./OpenCollection": {
-      "types": "./src/opencollection.ts",
-      "default": "./src/opencollection.ts"
-    },
-    "./opencollection": {
-      "types": "./src/opencollection.ts",
-      "default": "./src/opencollection.ts"
+      "types": "./dist/opencollection.d.ts",
+      "default": "./dist/opencollection.js"
     },
     "./common/*": {
-      "types": "./src/common/*.ts",
-      "default": "./src/common/*.ts"
+      "types": "./dist/common/*.d.ts",
+      "default": "./dist/common/*.js"
     },
     "./config/*": {
-      "types": "./src/config/*.ts",
-      "default": "./src/config/*.ts"
+      "types": "./dist/config/*.d.ts",
+      "default": "./dist/config/*.js"
     },
     "./collection/*": {
-      "types": "./src/collection/*.ts",
-      "default": "./src/collection/*.ts"
+      "types": "./dist/collection/*.d.ts",
+      "default": "./dist/collection/*.js"
     },
     "./requests/*": {
-      "types": "./src/requests/*.ts",
-      "default": "./src/requests/*.ts"
+      "types": "./dist/requests/*.d.ts",
+      "default": "./dist/requests/*.js"
     }
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
   },
   "license": "MIT",
   "keywords": [
