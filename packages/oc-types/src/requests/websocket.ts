@@ -25,6 +25,7 @@ export interface WebSocketMessageVariant {
 export type WebSocketPayload = WebSocketMessage | WebSocketMessageVariant[];
 
 export interface WebSocketRequest {
+  type: 'websocket';
   name?: string;
   description?: Description;
   url?: string;

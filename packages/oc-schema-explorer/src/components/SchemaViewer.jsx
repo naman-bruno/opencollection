@@ -3,18 +3,13 @@ import { Download, AlertCircle, Code, Network, Eye } from 'lucide-react';
 import MonacoEditor from '@monaco-editor/react';
 import SchemaExplorer from './SchemaExplorer';
 import SchemaGraph from './SchemaGraph';
-import { parseSchema } from '../utils/schemaParser';
-import opencollectionSchema from '../schemas/opencollection.schema.json';
+import { OpenCollectionSchema } from '@opencollection/schema';
 
 const SchemaViewer = () => {
   const [schema, setSchema] = useState(null);
-  const [parsedSchema, setParsedSchema] = useState(null);
   const [view, setView] = useState('explorer'); // 'explorer', 'visualize', or 'source'
   const [error, setError] = useState(null);
   const [jsonInput, setJsonInput] = useState('');
-
-
-
 
   const handleJsonInput = useCallback((value) => {
     setJsonInput(value);
@@ -43,22 +38,11 @@ const SchemaViewer = () => {
   }, [schema]);
 
 
-  useEffect(() => {
-    if (schema) {
-      try {
-        const parsed = parseSchema(schema);
-        setParsedSchema(parsed);
-      } catch (err) {
-        setError('Failed to parse schema');
-      }
-    }
-  }, [schema]);
-
   // Load opencollection schema by default on first mount
   useEffect(() => {
     try {
-      setSchema(opencollectionSchema);
-      setJsonInput(JSON.stringify(opencollectionSchema, null, 2));
+      setSchema(OpenCollectionSchema);
+      setJsonInput(JSON.stringify(OpenCollectionSchema, null, 2));
       setError(null);
     } catch (err) {
       setError('Failed to load opencollection schema');

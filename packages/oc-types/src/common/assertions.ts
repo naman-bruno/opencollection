@@ -8,6 +8,6 @@ export interface Assertion {
   expression: string;
   operator: string;
   value: string;
-  enabled?: boolean;
+  disabled?: boolean;
   description?: Description;
 }

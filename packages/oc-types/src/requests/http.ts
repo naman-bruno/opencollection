@@ -21,7 +21,7 @@ export interface HttpRequestParam {
   value: string;
   description?: Description;
   type: 'query' | 'path';
-  enabled?: boolean;
+  disabled?: boolean;
 }
 
 export interface RawBody {
@@ -33,7 +33,7 @@ export interface FormUrlEncodedEntry {
   name: string;
   value: string;
   description?: Description;
-  enabled?: boolean;
+  disabled?: boolean;
 }
 
 export type FormUrlEncodedBody = FormUrlEncodedEntry[];
@@ -43,7 +43,7 @@ export interface MultipartFormEntry {
   type: 'text' | 'file';
   value: string | string[];
   description?: Description;
-  enabled?: boolean;
+  disabled?: boolean;
 }
 
 export type MultipartFormBody = MultipartFormEntry[];

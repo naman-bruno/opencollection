@@ -3,12 +3,12 @@
   "$id": "https://schema.opencollection.com/json/draft-07/opencollection/v1.0.0",
   "type": "object",
   "properties": {
-    "name": {
-      "type": "string",
-      "description": "The name of the collection"
+    "info": {
+      "$ref": "#/$defs/Info"
     },
-    "description": {
-      "$ref": "#/$defs/Description"
+    "opencollection": {
+      "type": "string",
+      "description": "The version of the opencollection"
     },
     "config": {
       "$ref": "#/$defs/CollectionConfig"
@@ -38,6 +38,48 @@
     "Extensions": {
       "type": "object",
       "description": "Free-form object that allows implementers to extend the spec"
+    },
+    "Info": {
+      "type": "object",
+      "description": "Info about the collection",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the collection"
+        },
+        "summary": {
+          "type": "string",
+          "description": "A short summary of the collection"
+        },
+        "version": {
+          "type": "string",
+          "description": "The version of the collection"
+        },
+        "links": {
+          "type": "array",
+          "description": "Array of links related to the collection",
+          "items": {
+            "$ref": "#/$defs/Link"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "Link": {
+      "type": "object",
+      "description": "A link with title and URL",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the link"
+        },
+        "url": {
+          "type": "string",
+          "description": "The URL of the link"
+        }
+      },
+      "required": ["name", "url"],
+      "additionalProperties": false
     },
     "RequestDefaults": {
       "type": "object",
@@ -282,12 +324,12 @@
           "type": "string",
           "description": "The import path"
         },
-        "enabled": {
+        "disabled": {
           "type": "boolean",
-          "description": "Whether the import path is enabled"
+          "description": "Whether the import path is disabled"
         }
       },
-      "required": ["path", "enabled"],
+      "required": ["path"],
       "additionalProperties": false
     },
     "Description": {
@@ -464,7 +506,7 @@
     },
     "HttpRequestParam": {
       "type": "object",
-      "description": "A request parameter with name, value, description, type, and enabled state",
+      "description": "A request parameter with name, value, description, type, and disabled state",
       "properties": {
         "name": {
           "type": "string",
@@ -482,9 +524,9 @@
           "enum": ["query", "path"],
           "description": "The type of parameter"
         },
-        "enabled": {
+        "disabled": {
           "type": "boolean",
-          "description": "Whether the parameter is enabled"
+          "description": "Whether the parameter is disabled"
         }
       },
       "required": ["name", "value", "type"],
@@ -562,9 +604,9 @@
           "description": {
             "$ref": "#/$defs/Description"
           },
-          "enabled": {
+          "disabled": {
             "type": "boolean",
-            "description": "Whether the form field is enabled"
+            "description": "Whether the form field is disabled"
           }
         },
         "required": ["name", "value"],
@@ -603,9 +645,9 @@
           "description": {
             "$ref": "#/$defs/Description"
           },
-          "enabled": {
+          "disabled": {
             "type": "boolean",
-            "description": "Whether the form part is enabled"
+            "description": "Whether the form part is disabled"
           }
         },
         "required": ["name", "type", "value"],
@@ -685,9 +727,9 @@
           "type": "string",
           "description": "The expected value"
         },
-        "enabled": {
+        "disabled": {
           "type": "boolean",
-          "description": "Whether the assertion is enabled"
+          "description": "Whether the assertion is disabled"
         },
         "description": {
           "$ref": "#/$defs/Description"
@@ -1313,6 +1355,11 @@
         "description": {
           "$ref": "#/$defs/Description"
         },
+        "type": {
+          "type": "string",
+          "const": "websocket",
+          "description": "The type of request"
+        },
         "url": {
           "type": "string",
           "description": "The WebSocket URL"
@@ -1362,6 +1409,7 @@
           }
         }
       },
+      "required": ["type"],
       "additionalProperties": false
     },
     "Folder": {

@@ -11,7 +11,7 @@ export type ProtoFileItem = ProtoFile;
 
 export interface ProtoFileImportPath {
   path: string;
-  enabled: boolean;
+  disabled?: boolean;
 }
 
 export interface Protobuf {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, FileText, ArrowRight, Hash, Type, Layers, AlertCircle, Brackets, Braces, ToggleLeft, Split, Package } from 'lucide-react';
+import { X, FileText, ArrowRight, Hash, Type, Layers, AlertCircle, Brackets, Braces, ToggleLeft, Split, Package, Lock } from 'lucide-react';
 import { getSchemaType } from '../utils/schemaParser';
 
 const typeIcons = {
@@ -97,6 +97,12 @@ const SchemaPane = ({ pane, onClose, onNavigate, depth, rootSchema, allPanes }) 
           </div>
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-500">{propType}</span>
+            {resolvedValue.const !== undefined && (
+              <span className="text-xs text-teal-600 flex items-center gap-1">
+                <Lock className="w-3 h-3" />
+                <span className="font-mono">{JSON.stringify(resolvedValue.const)}</span>
+              </span>
+            )}
             {refName && (
               <span className="text-sm text-blue-500">{refName}</span>
             )}
