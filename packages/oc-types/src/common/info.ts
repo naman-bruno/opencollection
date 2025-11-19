@@ -1,16 +1,17 @@
 /**
- * Info and Link types for collection metadata
+ * Info and Author types for collection metadata
  */
 
-export interface Link {
-  name: string;
-  url: string;
+export interface Author {
+  name?: string;
+  email?: string;
+  url?: string;
 }
 
 export interface Info {
   name?: string;
   summary?: string;
   version?: string;
-  links?: Link[];
+  authors?: Author[];
 }
 

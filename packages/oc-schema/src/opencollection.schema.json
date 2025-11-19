@@ -55,30 +55,33 @@
           "type": "string",
           "description": "The version of the collection"
         },
-        "links": {
+        "authors": {
           "type": "array",
-          "description": "Array of links related to the collection",
+          "description": "Array of authors of the collection",
           "items": {
-            "$ref": "#/$defs/Link"
+            "$ref": "#/$defs/Author"
           }
         }
       },
       "additionalProperties": false
     },
-    "Link": {
+    "Author": {
       "type": "object",
-      "description": "A link with title and URL",
+      "description": "An author of the collection",
       "properties": {
         "name": {
           "type": "string",
-          "description": "The name of the link"
+          "description": "The name of the author"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the author"
         },
         "url": {
           "type": "string",
-          "description": "The URL of the link"
+          "description": "The URL of the author"
         }
       },
-      "required": ["name", "url"],
       "additionalProperties": false
     },
     "RequestDefaults": {
@@ -568,6 +571,91 @@
         }
       },
       "required": ["title", "body"],
+      "additionalProperties": false
+    },
+    "HttpRequestExample": {
+      "type": "object",
+      "description": "An example HTTP request/response pair",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the example"
+        },
+        "description": {
+          "$ref": "#/$defs/Description"
+        },
+        "request": {
+          "type": "object",
+          "description": "Example request configuration",
+          "properties": {
+            "url": {
+              "type": "string",
+              "description": "The URL of the request"
+            },
+            "method": {
+              "type": "string",
+              "description": "HTTP method"
+            },
+            "headers": {
+              "type": "array",
+              "description": "Array of request headers",
+              "items": {
+                "$ref": "#/$defs/HttpHeader"
+              }
+            },
+            "params": {
+              "type": "array",
+              "description": "Array of request parameters",
+              "items": {
+                "$ref": "#/$defs/HttpRequestParam"
+              }
+            },
+            "body": {
+              "$ref": "#/$defs/HttpRequestBody"
+            }
+          },
+          "additionalProperties": false
+        },
+        "response": {
+          "type": "object",
+          "description": "Example response",
+          "properties": {
+            "status": {
+              "type": "number",
+              "description": "HTTP status code"
+            },
+            "statusText": {
+              "type": "string",
+              "description": "HTTP status text"
+            },
+            "headers": {
+              "type": "array",
+              "description": "Array of response headers",
+              "items": {
+                "$ref": "#/$defs/HttpHeader"
+              }
+            },
+            "body": {
+              "type": "object",
+              "description": "Response body",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": ["json", "text", "xml", "html", "binary"],
+                  "description": "The type of response body"
+                },
+                "data": {
+                  "type": "string",
+                  "description": "The response body data"
+                }
+              },
+              "required": ["type", "data"],
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        }
+      },
       "additionalProperties": false
     },
     "RawBody": {
@@ -1161,6 +1249,13 @@
           "description": "Array of tags",
           "items": {
             "$ref": "#/$defs/Tag"
+          }
+        },
+        "examples": {
+          "type": "array",
+          "description": "Array of example HTTP request/response pairs",
+          "items": {
+            "$ref": "#/$defs/HttpRequestExample"
           }
         }
       },

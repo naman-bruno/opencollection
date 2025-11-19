@@ -71,6 +71,33 @@ export interface HttpRequestSettings {
   maxRedirects?: number | 'inherit';
 }
 
+export interface HttpRequestExampleRequest {
+  url?: string;
+  method?: string;
+  headers?: HttpHeader[];
+  params?: HttpRequestParam[];
+  body?: HttpRequestBody;
+}
+
+export interface HttpRequestExampleResponseBody {
+  type: 'json' | 'text' | 'xml' | 'html' | 'binary';
+  data: string;
+}
+
+export interface HttpRequestExampleResponse {
+  status?: number;
+  statusText?: string;
+  headers?: HttpHeader[];
+  body?: HttpRequestExampleResponseBody;
+}
+
+export interface HttpRequestExample {
+  name?: string;
+  description?: Description;
+  request?: HttpRequestExampleRequest;
+  response?: HttpRequestExampleResponse;
+}
+
 export interface HttpRequest {
   type: 'http';
   name?: string;
@@ -87,6 +114,7 @@ export interface HttpRequest {
   docs?: string;
   settings?: HttpRequestSettings;
   tags?: Tag[];
+  examples?: HttpRequestExample[];
 }
 
 export type { Auth, AuthApiKey, AuthAwsV4, AuthBasic, AuthBearer, AuthDigest, AuthNTLM, AuthWsse } from '../common/auth';
