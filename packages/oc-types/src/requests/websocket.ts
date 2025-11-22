@@ -28,6 +28,7 @@ export interface WebSocketRequest {
   type: 'websocket';
   name?: string;
   description?: Description;
+  seq?: number;
   url?: string;
   headers?: HttpHeader[];
   message?: WebSocketPayload;

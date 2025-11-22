@@ -2,6 +2,26 @@
  * Authentication configuration shared across request types
  */
 
+import type { AuthOAuth2 } from './auth-oauth2';
+
+// Re-export OAuth2 types for convenience
+export type { AuthOAuth2 } from './auth-oauth2';
+export type {
+  OAuth2TokenPlacedInHeader,
+  OAuth2TokenPlacedInQuery,
+  OAuth2TokenPlacement,
+  OAuth2TokenConfig,
+  OAuth2Settings,
+  OAuth2ClientCredentials,
+  OAuth2ResourceOwner,
+  OAuth2PKCE,
+  OAuth2AdditionalParameter,
+  OAuth2ClientCredentialsFlow,
+  OAuth2ResourceOwnerPasswordFlow,
+  OAuth2AuthorizationCodeFlow,
+  OAuth2ImplicitFlow,
+} from './auth-oauth2';
+
 export interface AuthAwsV4 {
   type: 'awsv4';
   accessKeyId?: string;
@@ -56,4 +76,5 @@ export type Auth =
   | AuthBearer
   | AuthDigest
   | AuthNTLM
-  | AuthApiKey;
+  | AuthApiKey
+  | AuthOAuth2;

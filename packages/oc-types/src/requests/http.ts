@@ -102,6 +102,7 @@ export interface HttpRequest {
   type: 'http';
   name?: string;
   description?: Description;
+  seq?: number;
   url?: string;
   method?: string;
   params?: HttpRequestParam[];

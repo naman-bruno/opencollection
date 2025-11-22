@@ -361,6 +361,10 @@
         }
       ]
     },
+    "Sequence": {
+      "type": "number",
+      "description": "Sequence number used to represent the order of the item when rendered in UI"
+    },
     "Documentation": {
       "description": "The documentation",
       "oneOf": [
@@ -849,8 +853,397 @@
         },
         {
           "$ref": "#/$defs/AuthApiKey"
+        },
+        {
+          "$ref": "#/$defs/AuthOAuth2"
         }
       ]
+    },
+    "AuthOAuth2": {
+      "description": "OAuth 2.0 authentication",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/OAuth2ClientCredentialsFlow"
+        },
+        {
+          "$ref": "#/$defs/OAuth2ResourceOwnerPasswordFlow"
+        },
+        {
+          "$ref": "#/$defs/OAuth2AuthorizationCodeFlow"
+        },
+        {
+          "$ref": "#/$defs/OAuth2ImplicitFlow"
+        }
+      ]
+    },
+    "OAuth2TokenPlacedInHeader": {
+      "type": "object",
+      "description": "Token placed in HTTP header",
+      "properties": {
+        "header": {
+          "type": "string",
+          "description": "Header name (e.g., 'Authorization')"
+        }
+      },
+      "required": ["header"],
+      "additionalProperties": false
+    },
+    "OAuth2TokenPlacedInQuery": {
+      "type": "object",
+      "description": "Token placed in query parameter",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Query parameter name (e.g., 'access_token')"
+        }
+      },
+      "required": ["query"],
+      "additionalProperties": false
+    },
+    "OAuth2TokenPlacement": {
+      "description": "Where the token is placed in requests",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/OAuth2TokenPlacedInHeader"
+        },
+        {
+          "$ref": "#/$defs/OAuth2TokenPlacedInQuery"
+        }
+      ]
+    },
+    "OAuth2TokenConfig": {
+      "type": "object",
+      "description": "Configuration for how OAuth 2.0 tokens are stored and transported with downstream requests",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Reference identifier for the token (used to access it via scripting APIs)"
+        },
+        "placement": {
+          "$ref": "#/$defs/OAuth2TokenPlacement"
+        }
+      },
+      "additionalProperties": false
+    },
+    "OAuth2Settings": {
+      "type": "object",
+      "description": "OAuth 2.0 automation settings",
+      "properties": {
+        "autoFetchToken": {
+          "type": "boolean",
+          "description": "Automatically fetch a new token when you try to access the resource and don't have one"
+        },
+        "autoRefreshToken": {
+          "type": "boolean",
+          "description": "Automatically refresh your token using the refreshTokenUrl when it expires"
+        }
+      },
+      "additionalProperties": false
+    },
+    "OAuth2ClientCredentials": {
+      "type": "object",
+      "description": "OAuth 2.0 client credentials configuration",
+      "properties": {
+        "clientId": {
+          "type": "string",
+          "description": "OAuth 2.0 client identifier"
+        },
+        "clientSecret": {
+          "type": "string",
+          "description": "OAuth 2.0 client secret"
+        },
+        "placement": {
+          "type": "string",
+          "enum": ["basic_auth_header", "body"],
+          "description": "Where credentials are placed in the request"
+        }
+      },
+      "additionalProperties": false
+    },
+    "OAuth2ResourceOwner": {
+      "type": "object",
+      "description": "Resource owner credentials",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "Resource owner username"
+        },
+        "password": {
+          "type": "string",
+          "description": "Resource owner password"
+        }
+      },
+      "additionalProperties": false
+    },
+    "OAuth2PKCE": {
+      "type": "object",
+      "description": "PKCE (Proof Key for Code Exchange) configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether PKCE is enabled"
+        },
+        "method": {
+          "type": "string",
+          "enum": ["S256", "plain"],
+          "description": "Code challenge method"
+        }
+      },
+      "additionalProperties": false
+    },
+    "OAuth2AdditionalParameter": {
+      "type": "object",
+      "description": "Additional parameter for OAuth 2.0 requests",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Parameter name"
+        },
+        "value": {
+          "type": "string",
+          "description": "Parameter value"
+        },
+        "placement": {
+          "type": "string",
+          "enum": ["header", "query", "body"],
+          "description": "Where to send this parameter"
+        }
+      },
+      "additionalProperties": false
+    },
+    "OAuth2ClientCredentialsFlow": {
+      "type": "object",
+      "description": "OAuth 2.0 Client Credentials flow",
+      "properties": {
+        "flow": {
+          "type": "string",
+          "const": "client_credentials"
+        },
+        "accessTokenUrl": {
+          "type": "string",
+          "description": "URL to fetch the access token"
+        },
+        "refreshTokenUrl": {
+          "type": "string",
+          "description": "URL to refresh the token"
+        },
+        "credentials": {
+          "$ref": "#/$defs/OAuth2ClientCredentials"
+        },
+        "scope": {
+          "type": "string",
+          "description": "Space-delimited OAuth 2.0 scopes"
+        },
+        "additionalParameters": {
+          "type": "object",
+          "properties": {
+            "accessTokenRequest": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/OAuth2AdditionalParameter"
+              }
+            },
+            "refreshTokenRequest": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/OAuth2AdditionalParameter"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "tokenConfig": {
+          "$ref": "#/$defs/OAuth2TokenConfig"
+        },
+        "settings": {
+          "$ref": "#/$defs/OAuth2Settings"
+        }
+      },
+      "required": ["flow"],
+      "additionalProperties": false
+    },
+    "OAuth2ResourceOwnerPasswordFlow": {
+      "type": "object",
+      "description": "OAuth 2.0 Resource Owner Password Credentials flow",
+      "properties": {
+        "flow": {
+          "type": "string",
+          "const": "resource_owner_password"
+        },
+        "accessTokenUrl": {
+          "type": "string",
+          "description": "URL to fetch the access token"
+        },
+        "refreshTokenUrl": {
+          "type": "string",
+          "description": "URL to refresh the token"
+        },
+        "credentials": {
+          "$ref": "#/$defs/OAuth2ClientCredentials"
+        },
+        "resourceOwner": {
+          "$ref": "#/$defs/OAuth2ResourceOwner"
+        },
+        "scope": {
+          "type": "string",
+          "description": "Space-delimited OAuth 2.0 scopes"
+        },
+        "additionalParameters": {
+          "type": "object",
+          "properties": {
+            "accessTokenRequest": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/OAuth2AdditionalParameter"
+              }
+            },
+            "refreshTokenRequest": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/OAuth2AdditionalParameter"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "tokenConfig": {
+          "$ref": "#/$defs/OAuth2TokenConfig"
+        },
+        "settings": {
+          "$ref": "#/$defs/OAuth2Settings"
+        }
+      },
+      "required": ["flow"],
+      "additionalProperties": false
+    },
+    "OAuth2AuthorizationCodeFlow": {
+      "type": "object",
+      "description": "OAuth 2.0 Authorization Code flow",
+      "properties": {
+        "flow": {
+          "type": "string",
+          "const": "authorization_code"
+        },
+        "authorizationUrl": {
+          "type": "string",
+          "description": "URL to authorize the user"
+        },
+        "accessTokenUrl": {
+          "type": "string",
+          "description": "URL to fetch the access token"
+        },
+        "refreshTokenUrl": {
+          "type": "string",
+          "description": "URL to refresh the token"
+        },
+        "callbackUrl": {
+          "type": "string",
+          "description": "URL to callback to after authorization"
+        },
+        "credentials": {
+          "$ref": "#/$defs/OAuth2ClientCredentials"
+        },
+        "scope": {
+          "type": "string",
+          "description": "Space-delimited OAuth 2.0 scopes"
+        },
+        "state": {
+          "type": "string",
+          "description": "Opaque value used for CSRF protection"
+        },
+        "pkce": {
+          "$ref": "#/$defs/OAuth2PKCE"
+        },
+        "additionalParameters": {
+          "type": "object",
+          "properties": {
+            "authorizationRequest": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/OAuth2AdditionalParameter"
+              }
+            },
+            "accessTokenRequest": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/OAuth2AdditionalParameter"
+              }
+            },
+            "refreshTokenRequest": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/OAuth2AdditionalParameter"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "tokenConfig": {
+          "$ref": "#/$defs/OAuth2TokenConfig"
+        },
+        "settings": {
+          "$ref": "#/$defs/OAuth2Settings"
+        }
+      },
+      "required": ["flow"],
+      "additionalProperties": false
+    },
+    "OAuth2ImplicitFlow": {
+      "type": "object",
+      "description": "OAuth 2.0 Implicit flow",
+      "properties": {
+        "flow": {
+          "type": "string",
+          "const": "implicit"
+        },
+        "authorizationUrl": {
+          "type": "string",
+          "description": "URL to authorize the user"
+        },
+        "callbackUrl": {
+          "type": "string",
+          "description": "URL to callback to after authorization"
+        },
+        "credentials": {
+          "type": "object",
+          "description": "Client credentials (implicit flow only needs clientId)",
+          "properties": {
+            "clientId": {
+              "type": "string",
+              "description": "OAuth 2.0 client identifier"
+            }
+          },
+          "additionalProperties": false
+        },
+        "scope": {
+          "type": "string",
+          "description": "Space-delimited OAuth 2.0 scopes"
+        },
+        "state": {
+          "type": "string",
+          "description": "Opaque value used for CSRF protection"
+        },
+        "additionalParameters": {
+          "type": "object",
+          "properties": {
+            "authorizationRequest": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/OAuth2AdditionalParameter"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "tokenConfig": {
+          "$ref": "#/$defs/OAuth2TokenConfig"
+        },
+        "settings": {
+          "$ref": "#/$defs/OAuth2Settings"
+        }
+      },
+      "required": ["flow"],
+      "additionalProperties": false
     },
     "AuthAwsV4": {
       "type": "object",
@@ -1177,6 +1570,9 @@
         "description": {
           "$ref": "#/$defs/Description"
         },
+        "seq": {
+          "$ref": "#/$defs/Sequence"
+        },
         "type": {
           "type": "string",
           "const": "http",
@@ -1273,6 +1669,9 @@
         "description": {
           "$ref": "#/$defs/Description"
         },
+        "seq": {
+          "$ref": "#/$defs/Sequence"
+        },
         "type": {
           "type": "string",
           "const": "graphql",
@@ -1362,6 +1761,9 @@
         "description": {
           "$ref": "#/$defs/Description"
         },
+        "seq": {
+          "$ref": "#/$defs/Sequence"
+        },
         "type": {
           "type": "string",
           "const": "grpc",
@@ -1450,6 +1852,9 @@
         "description": {
           "$ref": "#/$defs/Description"
         },
+        "seq": {
+          "$ref": "#/$defs/Sequence"
+        },
         "type": {
           "type": "string",
           "const": "websocket",
@@ -1514,6 +1919,16 @@
         "type": {
           "type": "string",
           "const": "folder"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the folder"
+        },
+        "description": {
+          "$ref": "#/$defs/Description"
+        },
+        "seq": {
+          "$ref": "#/$defs/Sequence"
         },
         "items": {
           "type": "array",

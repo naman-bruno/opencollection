@@ -32,6 +32,7 @@ export interface GraphQLRequest {
   type: 'graphql';
   name?: string;
   description?: Description;
+  seq?: number;
   url?: string;
   method?: string;
   params?: HttpRequestParam[];

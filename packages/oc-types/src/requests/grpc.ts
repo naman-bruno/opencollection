@@ -41,6 +41,7 @@ export interface GrpcRequest {
   type: 'grpc';
   name?: string;
   description?: Description;
+  seq?: number;
   url?: string;
   method?: string;
   methodType?: GrpcMethodType;

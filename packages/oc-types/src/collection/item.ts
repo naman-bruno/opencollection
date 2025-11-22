@@ -2,6 +2,7 @@
  * Collection items supported by the OpenCollection schema
  */
 
+import type { Description } from '../common/description';
 import type { Documentation } from '../common/documentation';
 import type { RequestDefaults } from '../common/request-defaults';
 import type { Tag } from '../common/tags';
@@ -12,6 +13,9 @@ import type { WebSocketRequest } from '../requests/websocket';
 
 export interface Folder {
   type: 'folder';
+  name?: string;
+  description?: Description;
+  seq?: number;
   items?: Item[];
   request?: RequestDefaults;
   docs?: Documentation;
