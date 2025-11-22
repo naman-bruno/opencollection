@@ -21,6 +21,7 @@ interface KeyValueTableProps {
     render: (row: KeyValueRow, index: number) => React.ReactNode;
   }>;
   className?: string;
+  disableNewRow?: boolean;
 }
 
 const generateId = () => `row_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -32,7 +33,8 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
   valuePlaceholder = 'Value',
   showEnabled = true,
   additionalColumns = [],
-  className = ''
+  className = '',
+  disableNewRow = false
 }) => {
   const isEditingRef = useRef(false);
   const focusRef = useRef<{ index: number; field: 'name' | 'value' } | null>(null);
@@ -40,6 +42,10 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
   const previousDataRef = useRef<string>('');
 
   const [rows, setRows] = useState<KeyValueRow[]>(() => {
+    if (disableNewRow) {
+      return data.map((row, idx) => ({ ...row, id: row.id || `row-${idx}` }));
+    }
+    
     const hasEmptyRow = data.length > 0 && 
       (!data[data.length - 1].name || data[data.length - 1].name.trim() === '');
     
@@ -69,6 +75,12 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
     }
     previousDataRef.current = dataString;
 
+    if (disableNewRow) {
+      const newRows = data.map((row, idx) => ({ ...row, id: row.id || `row-${idx}-${row.name || 'empty'}` }));
+      setRows(newRows);
+      return;
+    }
+    
     const hasEmptyRow = data.length > 0 && 
       (!data[data.length - 1].name || data[data.length - 1].name.trim() === '');
     
@@ -85,7 +97,7 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
         ];
     
     setRows(newRows);
-  }, [data]);
+  }, [data, disableNewRow]);
 
   const notifyChange = useCallback((updatedRows: KeyValueRow[]) => {
     const nonEmptyRows = updatedRows.filter(row => 
@@ -125,18 +137,22 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
     const oldName = currentRow.name;
     updatedRows[index] = { ...currentRow, [field]: value };
 
-    const isLastRow = index === rows.length - 1;
-    const wasNameEmpty = !oldName || oldName.trim() === '';
-    const isNowTyping = field === 'name' && value && value.trim() !== '';
+    if (!disableNewRow) {
+      const isLastRow = index === rows.length - 1;
+      const wasNameEmpty = !oldName || oldName.trim() === '';
+      const isNowTyping = field === 'name' && value && value.trim() !== '';
 
-    if (isLastRow && isNowTyping && wasNameEmpty) {
-      updatedRows.push({
-        id: generateId(),
-        name: '',
-        value: '',
-        enabled: true
-      });
-      focusRef.current = { index, field: 'name' };
+      if (isLastRow && isNowTyping && wasNameEmpty) {
+        updatedRows.push({
+          id: generateId(),
+          name: '',
+          value: '',
+          enabled: true
+        });
+        focusRef.current = { index, field: 'name' };
+      } else {
+        focusRef.current = { index, field: field as 'name' | 'value' };
+      }
     } else {
       focusRef.current = { index, field: field as 'name' | 'value' };
     }
@@ -145,33 +161,37 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
     notifyChange(updatedRows);
   };
 
-  const handleRemoveRow = (index: number) => {
-    const row = rows[index];
-    const isLastRow = index === rows.length - 1;
-    const isEmptyRow = !row.name || row.name.trim() === '';
+  const handleRemoveRow = useCallback((index: number) => {
+    setRows((prevRows) => {
+      const row = prevRows[index];
+      const isLastRow = index === prevRows.length - 1;
+      const isEmptyRow = !row.name || row.name.trim() === '';
 
-    if (isLastRow && isEmptyRow) {
-      return;
-    }
+      if (isLastRow && isEmptyRow) {
+        return prevRows;
+      }
 
-    const updatedRows = rows.filter((_, i) => i !== index);
+      const updatedRows = prevRows.filter((_, i) => i !== index);
 
-    const hasEmptyLastRow = updatedRows.length > 0 && 
-      (!updatedRows[updatedRows.length - 1].name || 
-       updatedRows[updatedRows.length - 1].name.trim() === '');
+      if (!disableNewRow) {
+        const hasEmptyLastRow = updatedRows.length > 0 && 
+          (!updatedRows[updatedRows.length - 1].name || 
+           updatedRows[updatedRows.length - 1].name.trim() === '');
 
-    if (!hasEmptyLastRow) {
-      updatedRows.push({
-        id: generateId(),
-        name: '',
-        value: '',
-        enabled: true
-      });
-    }
+        if (!hasEmptyLastRow) {
+          updatedRows.push({
+            id: generateId(),
+            name: '',
+            value: '',
+            enabled: true
+          });
+        }
+      }
 
-    setRows(updatedRows);
-    notifyChange(updatedRows);
-  };
+      notifyChange(updatedRows);
+      return updatedRows;
+    });
+  }, [disableNewRow, notifyChange]);
 
   return (
     <div className={`key-value-table-wrapper ${className}`}>
