@@ -36,7 +36,10 @@ export interface FormUrlEncodedEntry {
   disabled?: boolean;
 }
 
-export type FormUrlEncodedBody = FormUrlEncodedEntry[];
+export interface FormUrlEncodedBody {
+  type: 'form-urlencoded';
+  data: FormUrlEncodedEntry[];
+}
 
 export interface MultipartFormEntry {
   name: string;
@@ -46,7 +49,10 @@ export interface MultipartFormEntry {
   disabled?: boolean;
 }
 
-export type MultipartFormBody = MultipartFormEntry[];
+export interface MultipartFormBody {
+  type: 'multipart-form';
+  data: MultipartFormEntry[];
+}
 
 export interface FileBodyEntry {
   filePath: string;
@@ -54,9 +60,12 @@ export interface FileBodyEntry {
   selected: boolean;
 }
 
-export type FileBody = FileBodyEntry[];
+export interface FileBody {
+  type: 'file';
+  data: FileBodyEntry[];
+}
 
-export type HttpRequestBody = RawBody | FormUrlEncodedBody | MultipartFormBody | FileBody | null;
+export type HttpRequestBody = RawBody | FormUrlEncodedBody | MultipartFormBody | FileBody;
 
 export interface HttpRequestBodyVariant {
   title: string;
@@ -66,7 +75,7 @@ export interface HttpRequestBodyVariant {
 
 export interface HttpRequestSettings {
   encodeUrl?: boolean | 'inherit';
-  timeout?: number;
+  timeout?: number | 'inherit';
   followRedirects?: boolean | 'inherit';
   maxRedirects?: number | 'inherit';
 }

@@ -552,9 +552,6 @@
         },
         {
           "$ref": "#/$defs/FileBody"
-        },
-        {
-          "type": "null"
         }
       ]
     },
@@ -680,94 +677,133 @@
       "additionalProperties": false
     },
     "FormUrlEncodedBody": {
-      "type": "array",
-      "description": "Form URL encoded body as array of key-value pairs",
-      "items": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "The form field name"
-          },
-          "value": {
-            "type": "string",
-            "description": "The form field value"
-          },
-          "description": {
-            "$ref": "#/$defs/Description"
-          },
-          "disabled": {
-            "type": "boolean",
-            "description": "Whether the form field is disabled"
-          }
+      "type": "object",
+      "description": "Form URL encoded body",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "form-urlencoded",
+          "description": "The body type identifier"
         },
-        "required": ["name", "value"],
-        "additionalProperties": false
-      }
+        "data": {
+          "type": "array",
+          "description": "Form fields as array of key-value pairs",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "The form field name"
+              },
+              "value": {
+                "type": "string",
+                "description": "The form field value"
+              },
+              "description": {
+                "$ref": "#/$defs/Description"
+              },
+              "disabled": {
+                "type": "boolean",
+                "description": "Whether the form field is disabled"
+              }
+            },
+            "required": ["name", "value"],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": ["type", "data"],
+      "additionalProperties": false
     },
     "MultipartFormBody": {
-      "type": "array",
-      "description": "Multipart form body as array of form parts",
-      "items": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "The form part name"
-          },
-          "type": {
-            "type": "string",
-            "enum": ["text", "file"],
-            "description": "The type of form part"
-          },
-          "value": {
-            "oneOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              }
-            ],
-            "description": "The form part value"
-          },
-          "description": {
-            "$ref": "#/$defs/Description"
-          },
-          "disabled": {
-            "type": "boolean",
-            "description": "Whether the form part is disabled"
-          }
+      "type": "object",
+      "description": "Multipart form body",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "multipart-form",
+          "description": "The body type identifier"
         },
-        "required": ["name", "type", "value"],
-        "additionalProperties": false
-      }
+        "data": {
+          "type": "array",
+          "description": "Form parts as array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "The form part name"
+              },
+              "type": {
+                "type": "string",
+                "enum": ["text", "file"],
+                "description": "The type of form part"
+              },
+              "value": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                ],
+                "description": "The form part value"
+              },
+              "description": {
+                "$ref": "#/$defs/Description"
+              },
+              "disabled": {
+                "type": "boolean",
+                "description": "Whether the form part is disabled"
+              }
+            },
+            "required": ["name", "type", "value"],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": ["type", "data"],
+      "additionalProperties": false
     },
     "FileBody": {
-      "type": "array",
-      "description": "File body as array of file objects",
-      "items": {
-        "type": "object",
-        "properties": {
-          "filePath": {
-            "type": "string",
-            "description": "Path to the file"
-          },
-          "contentType": {
-            "type": "string",
-            "description": "MIME type of the file"
-          },
-          "selected": {
-            "type": "boolean",
-            "description": "Whether the file is selected"
-          }
+      "type": "object",
+      "description": "File body",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "file",
+          "description": "The body type identifier"
         },
-        "required": ["filePath", "contentType", "selected"],
-        "additionalProperties": false
-      }
+        "data": {
+          "type": "array",
+          "description": "Files as array of file objects",
+          "items": {
+            "type": "object",
+            "properties": {
+              "filePath": {
+                "type": "string",
+                "description": "Path to the file"
+              },
+              "contentType": {
+                "type": "string",
+                "description": "MIME type of the file"
+              },
+              "selected": {
+                "type": "boolean",
+                "description": "Whether the file is selected"
+              }
+            },
+            "required": ["filePath", "contentType", "selected"],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": ["type", "data"],
+      "additionalProperties": false
     },
     "GraphQLBody": {
       "type": "object",
@@ -827,7 +863,7 @@
           "$ref": "#/$defs/Description"
         }
       },
-      "required": ["expression", "operator", "value"],
+      "required": ["expression", "operator"],
       "additionalProperties": false
     },
     "Auth": {
@@ -856,6 +892,10 @@
         },
         {
           "$ref": "#/$defs/AuthOAuth2"
+        },
+        {
+          "type": "string",
+          "const": "inherit"
         }
       ]
     },
@@ -1015,6 +1055,10 @@
       "type": "object",
       "description": "OAuth 2.0 Client Credentials flow",
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "oauth2"
+        },
         "flow": {
           "type": "string",
           "const": "client_credentials"
@@ -1059,13 +1103,17 @@
           "$ref": "#/$defs/OAuth2Settings"
         }
       },
-      "required": ["flow"],
+      "required": ["type", "flow"],
       "additionalProperties": false
     },
     "OAuth2ResourceOwnerPasswordFlow": {
       "type": "object",
       "description": "OAuth 2.0 Resource Owner Password Credentials flow",
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "oauth2"
+        },
         "flow": {
           "type": "string",
           "const": "resource_owner_password"
@@ -1113,13 +1161,17 @@
           "$ref": "#/$defs/OAuth2Settings"
         }
       },
-      "required": ["flow"],
+      "required": ["type", "flow"],
       "additionalProperties": false
     },
     "OAuth2AuthorizationCodeFlow": {
       "type": "object",
       "description": "OAuth 2.0 Authorization Code flow",
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "oauth2"
+        },
         "flow": {
           "type": "string",
           "const": "authorization_code"
@@ -1185,13 +1237,17 @@
           "$ref": "#/$defs/OAuth2Settings"
         }
       },
-      "required": ["flow"],
+      "required": ["type", "flow"],
       "additionalProperties": false
     },
     "OAuth2ImplicitFlow": {
       "type": "object",
       "description": "OAuth 2.0 Implicit flow",
       "properties": {
+        "type": {
+          "type": "string",
+          "const": "oauth2"
+        },
         "flow": {
           "type": "string",
           "const": "implicit"
@@ -1242,7 +1298,7 @@
           "$ref": "#/$defs/OAuth2Settings"
         }
       },
-      "required": ["flow"],
+      "required": ["type", "flow"],
       "additionalProperties": false
     },
     "AuthAwsV4": {
@@ -1454,7 +1510,15 @@
           "description": "Whether to encode the URL"
         },
         "timeout": {
-          "type": "number",
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string",
+              "const": "inherit"
+            }
+          ],
           "description": "Request timeout in milliseconds"
         },
         "followRedirects": {
@@ -1511,7 +1575,15 @@
           "description": "Whether to encode the URL"
         },
         "timeout": {
-          "type": "number",
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string",
+              "const": "inherit"
+            }
+          ],
           "description": "Request timeout in milliseconds"
         },
         "followRedirects": {

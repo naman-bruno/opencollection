@@ -75,6 +75,7 @@ export interface OAuth2AdditionalParameter {
  * OAuth 2.0 Client Credentials Flow
  */
 export interface OAuth2ClientCredentialsFlow {
+  type: 'oauth2';
   flow: 'client_credentials';
   accessTokenUrl?: string;
   refreshTokenUrl?: string;
@@ -92,6 +93,7 @@ export interface OAuth2ClientCredentialsFlow {
  * OAuth 2.0 Resource Owner Password Flow
  */
 export interface OAuth2ResourceOwnerPasswordFlow {
+  type: 'oauth2';
   flow: 'resource_owner_password';
   accessTokenUrl?: string;
   refreshTokenUrl?: string;
@@ -110,6 +112,7 @@ export interface OAuth2ResourceOwnerPasswordFlow {
  * OAuth 2.0 Authorization Code Flow
  */
 export interface OAuth2AuthorizationCodeFlow {
+  type: 'oauth2';
   flow: 'authorization_code';
   authorizationUrl?: string;
   accessTokenUrl?: string;
@@ -132,6 +135,7 @@ export interface OAuth2AuthorizationCodeFlow {
  * OAuth 2.0 Implicit Flow
  */
 export interface OAuth2ImplicitFlow {
+  type: 'oauth2';
   flow: 'implicit';
   authorizationUrl?: string;
   callbackUrl?: string;

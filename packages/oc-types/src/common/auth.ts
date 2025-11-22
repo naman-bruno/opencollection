@@ -77,4 +77,5 @@ export type Auth =
   | AuthDigest
   | AuthNTLM
   | AuthApiKey
-  | AuthOAuth2;
+  | AuthOAuth2
+  | 'inherit';

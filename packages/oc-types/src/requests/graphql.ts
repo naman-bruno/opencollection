@@ -23,7 +23,7 @@ export interface GraphQLBodyVariant {
 
 export interface GraphQLRequestSettings {
   encodeUrl?: boolean | 'inherit';
-  timeout?: number;
+  timeout?: number | 'inherit';
   followRedirects?: boolean | 'inherit';
   maxRedirects?: number | 'inherit';
 }
