@@ -22,6 +22,7 @@ interface KeyValueTableProps {
   }>;
   className?: string;
   disableNewRow?: boolean;
+  disableDelete?: boolean;
 }
 
 const generateId = () => `row_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -34,7 +35,8 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
   showEnabled = true,
   additionalColumns = [],
   className = '',
-  disableNewRow = false
+  disableNewRow = false,
+  disableDelete = false
 }) => {
   const isEditingRef = useRef(false);
   const focusRef = useRef<{ index: number; field: 'name' | 'value' } | null>(null);
@@ -266,7 +268,7 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                     </td>
                   ))}
                   <td className="col-actions">
-                    {!isLastEmptyRow && (
+                    {!isLastEmptyRow && !disableDelete && (
                       <button
                         type="button"
                         className="delete-button"

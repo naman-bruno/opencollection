@@ -62,23 +62,6 @@ const RequestPane: React.FC<RequestPaneProps> = ({ item, onItemChange }) => {
           keyPlaceholder="Key"
           valuePlaceholder="Value"
           showEnabled={true}
-          additionalColumns={[
-            {
-              key: 'type',
-              label: 'Type',
-              render: (row) => (
-                <span 
-                  className="px-2 py-1 text-xs rounded" 
-                  style={{ 
-                    backgroundColor: 'var(--bg-tertiary)', 
-                    color: 'var(--text-secondary)' 
-                  }}
-                >
-                  {row.type || 'query'}
-                </span>
-              )
-            }
-          ]}
         />
       </div>
     );

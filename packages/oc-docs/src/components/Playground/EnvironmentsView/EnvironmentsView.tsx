@@ -216,6 +216,7 @@ const EnvironmentsView: React.FC<EnvironmentsViewProps> = ({
                 valuePlaceholder="Variable Value"
                 showEnabled={true}
                 disableNewRow={true}
+                disableDelete={true}
               />
             </div>
           </div>
