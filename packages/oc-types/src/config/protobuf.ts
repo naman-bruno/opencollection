@@ -18,6 +18,6 @@ export interface Protobuf {
   /**
    * Property name follows the schema spelling (protofFiles)
    */
-  protofFiles?: ProtoFileItem[];
+  protoFiles?: ProtoFileItem[];
   importPaths?: ProtoFileImportPath[];
 }

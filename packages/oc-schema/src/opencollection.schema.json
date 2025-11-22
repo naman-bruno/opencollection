@@ -165,7 +165,7 @@
       "type": "object",
       "description": "Protobuf configuration",
       "properties": {
-        "protofFiles": {
+        "protoFiles": {
           "type": "array",
           "description": "Array of proto files",
           "items": {
