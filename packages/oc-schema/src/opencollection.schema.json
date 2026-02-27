@@ -1046,6 +1046,12 @@
         },
         "placement": {
           "$ref": "#/$defs/OAuth2TokenPlacement"
+        },
+        "source": {
+          "type": "string",
+          "enum": ["access_token", "id_token"],
+          "default": "access_token",
+          "description": "Which token to use for authorization (defaults to access_token)"
         }
       },
       "additionalProperties": false

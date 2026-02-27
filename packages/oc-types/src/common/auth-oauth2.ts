@@ -27,6 +27,7 @@ export type OAuth2TokenPlacement = OAuth2TokenPlacedInHeader | OAuth2TokenPlaced
 export interface OAuth2TokenConfig {
   id?: string;
   placement?: OAuth2TokenPlacement;
+  source?: 'access_token' | 'id_token';
 }
 
 /**
