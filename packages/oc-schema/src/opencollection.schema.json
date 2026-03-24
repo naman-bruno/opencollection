@@ -976,6 +976,9 @@
           "$ref": "#/$defs/AuthApiKey"
         },
         {
+          "$ref": "#/$defs/AuthOAuth1"
+        },
+        {
           "$ref": "#/$defs/AuthOAuth2"
         },
         {
@@ -983,6 +986,87 @@
           "const": "inherit"
         }
       ]
+    },
+    "AuthOAuth1": {
+      "type": "object",
+      "description": "OAuth 1.0 authentication",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "oauth1"
+        },
+        "consumerKey": {
+          "type": "string",
+          "description": "Consumer key (API key)"
+        },
+        "consumerSecret": {
+          "type": "string",
+          "description": "Consumer secret (API secret)"
+        },
+        "accessToken": {
+          "type": "string",
+          "description": "Access token key"
+        },
+        "accessTokenSecret": {
+          "type": "string",
+          "description": "Access token secret"
+        },
+        "callbackUrl": {
+          "type": "string",
+          "description": "Callback URL for the Temporary Credentials Request (RFC 5849 §2.1). Use \"oob\" for out-of-band."
+        },
+        "verifier": {
+          "type": "string",
+          "description": "Verification code from the Resource Owner Authorization step (RFC 5849 §2.2). Required in Token Credentials Request (§2.3)."
+        },
+        "signatureEncoding": {
+          "type": "string",
+          "enum": ["HMAC-SHA1", "HMAC-SHA256", "HMAC-SHA512", "RSA-SHA1", "RSA-SHA256", "RSA-SHA512", "PLAINTEXT"],
+          "description": "Signature encoding"
+        },
+        "privateKey": {
+          "type": "object",
+          "description": "Private key (PEM format, required for RSA-* methods). Use type 'text' for inline key, 'file' for file path.",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["file", "text"]
+            },
+            "value": {
+              "type": "string"
+            }
+          },
+          "required": ["type", "value"],
+          "additionalProperties": false
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Custom timestamp (auto-generated if not provided)"
+        },
+        "nonce": {
+          "type": "string",
+          "description": "Custom nonce (auto-generated if not provided)"
+        },
+        "version": {
+          "type": "string",
+          "description": "OAuth version (defaults to \"1.0\")"
+        },
+        "realm": {
+          "type": "string",
+          "description": "Authentication realm"
+        },
+        "placement": {
+          "type": "string",
+          "enum": ["header", "query", "body"],
+          "description": "Where to add OAuth parameters"
+        },
+        "includeBodyHash": {
+          "type": "boolean",
+          "description": "Whether to include a body hash in the signature"
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
     },
     "AuthOAuth2": {
       "description": "OAuth 2.0 authentication",

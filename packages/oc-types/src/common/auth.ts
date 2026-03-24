@@ -2,7 +2,11 @@
  * Authentication configuration shared across request types
  */
 
+import type { AuthOAuth1 } from './auth-oauth1';
 import type { AuthOAuth2 } from './auth-oauth2';
+
+// Re-export OAuth1 types for convenience
+export type { AuthOAuth1 } from './auth-oauth1';
 
 // Re-export OAuth2 types for convenience
 export type { AuthOAuth2 } from './auth-oauth2';
@@ -77,5 +81,6 @@ export type Auth =
   | AuthDigest
   | AuthNTLM
   | AuthApiKey
+  | AuthOAuth1
   | AuthOAuth2
   | 'inherit';
